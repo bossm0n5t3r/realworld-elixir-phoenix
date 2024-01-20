@@ -7,6 +7,8 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
   scope "/api", RealworldElixirPhoenixWeb do
     pipe_through :api
+    post "/users/login", UserController, :login
+    resources "/users", UserController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
