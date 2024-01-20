@@ -39,6 +39,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :realworld_elixir_phoenix, RealworldElixirPhoenix.Guardian,
+  issuer: "realworld_elixir_phoenix",
+  secret_key: "LhR5tiljWFccS7lT88OzOfiuaBhrPFWuHG9aaXspc55sS4jMKSm6lKFQgQypVHSD"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
