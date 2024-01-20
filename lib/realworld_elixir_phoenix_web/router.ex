@@ -8,6 +8,7 @@ defmodule RealworldElixirPhoenixWeb.Router do
   scope "/api", RealworldElixirPhoenixWeb do
     pipe_through :api
     post "/users/login", UserController, :login
+    delete "/users/all", UserController, :delete_all
     resources "/users", UserController, except: [:new, :edit]
   end
 

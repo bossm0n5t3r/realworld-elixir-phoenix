@@ -41,6 +41,12 @@ defmodule RealworldElixirPhoenixWeb.UserController do
     end
   end
 
+  def delete_all(conn, _params) do
+    with {_count, _users} <- Accounts.delete_all_users() do
+      send_resp(conn, :no_content, "")
+    end
+  end
+
   def login(conn, %{"user" => %{"email" => email, "password" => password}}) do
     user = Accounts.get_user_by_email(email)
     # TODO add password hashing
