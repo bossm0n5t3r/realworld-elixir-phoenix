@@ -4,6 +4,8 @@ defmodule RealworldElixirPhoenixWeb.UserController do
   alias RealworldElixirPhoenix.Accounts
   alias RealworldElixirPhoenix.Accounts.User
 
+  import RealworldElixirPhoenix.Guardian
+
   action_fallback RealworldElixirPhoenixWeb.FallbackController
 
   def index(conn, _params) do
@@ -13,10 +15,11 @@ defmodule RealworldElixirPhoenixWeb.UserController do
 
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
+      {:ok, token, _} = encode_and_sign(user)
+
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> render(:show, user: user)
+      |> render(:users, user: user, token: token)
     end
   end
 
