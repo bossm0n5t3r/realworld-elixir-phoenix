@@ -89,6 +89,10 @@ defmodule RealworldElixirPhoenix.Accounts do
     Repo.delete(user)
   end
 
+  def delete_all_users() do
+    Repo.delete_all(User)
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 
