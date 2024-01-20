@@ -18,7 +18,7 @@ defmodule RealworldElixirPhoenix.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:username, :email, :password, :bio, :image])
-    |> validate_required([:username, :email, :password, :bio, :image])
+    |> validate_required([:username, :email, :password])
     |> unique_constraint(:email)
   end
 end
