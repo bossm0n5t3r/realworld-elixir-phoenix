@@ -72,3 +72,16 @@ You can also run your app inside IEx (Interactive Elixir) as:
 ❯
 
 ```
+
+## References
+
+### RealWorld
+
+- [https://realworld-docs.netlify.app/](https://realworld-docs.netlify.app/)
+- [https://github.com/gothinkster/realworld](https://github.com/gothinkster/realworld)
+- [https://github.com/tamanugi/realworld-phoenix](https://github.com/tamanugi/realworld-phoenix)
+
+### Auth
+
+- [https://medium.com/wttj-tech/elixirs-best-practices-achieve-secure-authentication-8961f60effc7](https://medium.com/wttj-tech/elixirs-best-practices-achieve-secure-authentication-8961f60effc7)
+- [https://levelup.gitconnected.com/a-deep-dive-into-authentication-in-elixir-phoenix-with-phx-gen-auth-9686afecf8bd](https://levelup.gitconnected.com/a-deep-dive-into-authentication-in-elixir-phoenix-with-phx-gen-auth-9686afecf8bd)
