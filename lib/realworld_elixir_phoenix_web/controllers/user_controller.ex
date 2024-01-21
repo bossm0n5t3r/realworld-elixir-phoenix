@@ -55,14 +55,14 @@ defmodule RealworldElixirPhoenixWeb.UserController do
 
   def login(conn, %{"user" => %{"email" => email, "password" => password}}) do
     user = Accounts.get_user_by_email(email)
-    # TODO add password hashing
-    if user && user.password == password do
-      {:ok, token, _} = encode_and_sign(user)
 
-      conn
-      |> render(:users, user: user, token: token)
-    else
-      send_resp(conn, :unauthorized, "")
+    case Bcrypt.verify_pass(password, user.password) do
+      true ->
+        {:ok, token, _} = encode_and_sign(user)
+        render(conn, :users, user: user, token: token)
+
+      false ->
+        send_resp(conn, :unauthorized, "")
     end
   end
 end
