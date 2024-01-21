@@ -29,11 +29,13 @@ defmodule RealworldElixirPhoenixWeb.UserController do
     render(conn, :users, user: user, token: token)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
+  def update(conn, %{"user" => user_params}) do
+    user = Guardian.Plug.current_resource(conn)
 
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, :show, user: user)
+      {:ok, token, _} = encode_and_sign(user)
+
+      render(conn, :users, user: user, token: token)
     end
   end
 

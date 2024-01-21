@@ -34,6 +34,7 @@ defmodule RealworldElixirPhoenixWeb.Router do
     pipe_through [:api, :require_authenticated]
 
     get "/user", UserController, :show
+    put "/user", UserController, :update
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
