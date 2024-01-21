@@ -54,7 +54,10 @@ defmodule RealworldElixirPhoenixWeb.UserController do
     user = Accounts.get_user_by_email(email)
     # TODO add password hashing
     if user && user.password == password do
-      render(conn, :show, user: user)
+      {:ok, token, _} = encode_and_sign(user)
+
+      conn
+      |> render(:users, user: user, token: token)
     else
       send_resp(conn, :unauthorized, "")
     end
