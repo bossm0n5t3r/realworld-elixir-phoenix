@@ -2,14 +2,38 @@ defmodule RealworldElixirPhoenixWeb.Router do
   use RealworldElixirPhoenixWeb, :router
 
   pipeline :api do
+    plug Guardian.Plug.Pipeline,
+      module: RealworldElixirPhoenix.Guardian,
+      error_handler: RealworldElixirPhoenixWeb.AuthErrorHandler
+
     plug :accepts, ["json"]
+    plug Guardian.Plug.VerifySession
+    plug Guardian.Plug.VerifyHeader, scheme: "Token"
+    plug Guardian.Plug.LoadResource, allow_blank: true
   end
 
+  pipeline :check_authenticated do
+  end
+
+  pipeline :require_authenticated do
+    plug Guardian.Plug.EnsureAuthenticated
+  end
+
+  # Optional Authenticated
   scope "/api", RealworldElixirPhoenixWeb do
-    pipe_through :api
+    pipe_through [:api, :check_authenticated]
+
+    post "/users", UserController, :create
     post "/users/login", UserController, :login
+
     delete "/users/all", UserController, :delete_all
-    resources "/users", UserController, except: [:new, :edit]
+  end
+
+  # Required Authenticated
+  scope "/api", RealworldElixirPhoenixWeb do
+    pipe_through [:api, :require_authenticated]
+
+    get "/user", UserController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
