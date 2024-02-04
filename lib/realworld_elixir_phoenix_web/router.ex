@@ -35,6 +35,8 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
     get "/user", UserController, :show
     put "/user", UserController, :update
+
+    resources "/articles", ArticleController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
