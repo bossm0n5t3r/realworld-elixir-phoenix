@@ -17,7 +17,7 @@ defmodule RealworldElixirPhoenix.Articles.ArticleTag do
   @doc false
   def changeset(article_tag, attrs) do
     article_tag
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:article_id, :tag_id])
+    |> validate_required([:article_id, :tag_id])
   end
 end
