@@ -27,6 +27,9 @@ defmodule RealworldElixirPhoenixWeb.Router do
     post "/users/login", UserController, :login
 
     delete "/users/all", UserController, :delete_all
+
+    get "/articles", ArticleController, :index
+    get "/articles/:slug", ArticleController, :show
   end
 
   # Required Authenticated
@@ -36,7 +39,11 @@ defmodule RealworldElixirPhoenixWeb.Router do
     get "/user", UserController, :show
     put "/user", UserController, :update
 
-    resources "/articles", ArticleController, except: [:new, :edit]
+    post "/articles", ArticleController, :create
+    get "/articles/feed", ArticleController, :feed
+
+    put "/articles/:slug", ArticleController, :update
+    delete "/articles/:slug", ArticleController, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
