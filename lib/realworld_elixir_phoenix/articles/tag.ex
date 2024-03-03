@@ -15,5 +15,6 @@ defmodule RealworldElixirPhoenix.Articles.Tag do
     tag
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    |> unique_constraint(:name, name: :tags_name_index)
   end
 end
