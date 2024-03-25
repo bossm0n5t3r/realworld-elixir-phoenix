@@ -59,13 +59,24 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
 
     create table(:favorites, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :user, references(:users, on_delete: :nothing, type: :binary_id)
-      add :article, references(:articles, on_delete: :nothing, type: :binary_id)
+      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
+      add :article_id, references(:articles, on_delete: :nothing, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
 
-    create index(:favorites, [:user])
-    create index(:favorites, [:article])
+    create index(:favorites, [:user_id])
+    create index(:favorites, [:article_id])
+
+    create table(:follow_related, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
+      add :target_id, references(:users, on_delete: :nothing, type: :binary_id)
+
+      timestamps(type: :utc_datetime)
+    end
+
+    create index(:follow_related, [:user_id])
+    create index(:follow_related, [:target_id])
   end
 end
