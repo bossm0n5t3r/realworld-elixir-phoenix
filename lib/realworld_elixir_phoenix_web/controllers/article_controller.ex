@@ -23,7 +23,13 @@ defmodule RealworldElixirPhoenixWeb.ArticleController do
   end
 
   def create(conn, %{"article" => article_params}) do
-    with {:ok, %Article{} = article} <- Articles.create_article(article_params) do
+    with user <- Guardian.Plug.current_resource(conn),
+         article_params <- Map.put(article_params, "author_id", user.id),
+         {:ok, %Article{} = article} <- Articles.create_article(article_params) do
+      article =
+        article
+        |> Articles.article_preload()
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/articles/#{article}")
@@ -31,9 +37,14 @@ defmodule RealworldElixirPhoenixWeb.ArticleController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    article = Articles.get_article!(id)
-    render(conn, :show, article: article)
+  def show(conn, %{"slug" => slug}) do
+    user = Guardian.Plug.current_resource(conn)
+
+    with %Article{} = article <-
+           Articles.get_article_by_slug(slug, user),
+         article <- article |> Articles.article_preload() do
+      render(conn, :show, article: article)
+    end
   end
 
   def update(conn, %{"id" => id, "article" => article_params}) do
