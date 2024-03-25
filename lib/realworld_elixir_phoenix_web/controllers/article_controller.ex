@@ -6,8 +6,19 @@ defmodule RealworldElixirPhoenixWeb.ArticleController do
 
   action_fallback RealworldElixirPhoenixWeb.FallbackController
 
-  def index(conn, _params) do
-    articles = Articles.list_articles()
+  def index(conn, params) do
+    keywords = for {key, val} <- params, do: {String.to_atom(key), val}
+
+    keywords =
+      case Guardian.Plug.current_resource(conn) do
+        nil -> keywords
+        user -> keywords |> Keyword.put(:user, user)
+      end
+
+    articles =
+      Articles.list_articles(keywords)
+      |> Articles.article_preload()
+
     render(conn, :index, articles: articles)
   end
 
