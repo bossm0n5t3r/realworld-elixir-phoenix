@@ -47,10 +47,13 @@ defmodule RealworldElixirPhoenixWeb.ArticleController do
     end
   end
 
-  def update(conn, %{"id" => id, "article" => article_params}) do
-    article = Articles.get_article!(id)
+  def update(conn, %{"slug" => slug, "article" => article_params}) do
+    with article <- Articles.get_article_by_slug(slug),
+         {:ok, %Article{} = article} <- Articles.update_article(article, article_params) do
+      article =
+        article
+        |> Articles.article_preload()
 
-    with {:ok, %Article{} = article} <- Articles.update_article(article, article_params) do
       render(conn, :show, article: article)
     end
   end
