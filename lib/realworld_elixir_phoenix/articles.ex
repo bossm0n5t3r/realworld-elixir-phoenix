@@ -8,6 +8,7 @@ defmodule RealworldElixirPhoenix.Articles do
 
   alias RealworldElixirPhoenix.Articles.Article
   alias RealworldElixirPhoenix.Articles.Favorite
+  alias RealworldElixirPhoenix.Articles.Tag
   alias RealworldElixirPhoenix.Accounts.User
 
   @default_limit 20
@@ -191,5 +192,9 @@ defmodule RealworldElixirPhoenix.Articles do
   """
   def change_article(%Article{} = article, attrs \\ %{}) do
     Article.changeset(article, attrs)
+  end
+
+  def list_tags() do
+    Repo.all(Tag)
   end
 end
