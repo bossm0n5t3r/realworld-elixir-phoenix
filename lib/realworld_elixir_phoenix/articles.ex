@@ -159,6 +159,7 @@ defmodule RealworldElixirPhoenix.Articles do
   """
   def update_article(%Article{} = article, attrs) do
     article
+    |> Repo.preload(:tagList)
     |> Article.changeset(attrs)
     |> Repo.update()
   end
