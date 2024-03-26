@@ -62,4 +62,16 @@ defmodule RealworldElixirPhoenixWeb.ArticleController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def feed(conn, params) do
+    keywords = for {key, val} <- params, do: {String.to_atom(key), val}
+
+    user = Guardian.Plug.current_resource(conn)
+
+    articles =
+      Articles.list_articles_feed(user, keywords)
+      |> Articles.article_preload()
+
+    render(conn, :index, articles: articles)
+  end
 end
