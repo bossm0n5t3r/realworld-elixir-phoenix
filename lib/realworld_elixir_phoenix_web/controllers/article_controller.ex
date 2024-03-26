@@ -55,10 +55,9 @@ defmodule RealworldElixirPhoenixWeb.ArticleController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    article = Articles.get_article!(id)
-
-    with {:ok, %Article{}} <- Articles.delete_article(article) do
+  def delete(conn, %{"slug" => slug}) do
+    with article <- Articles.get_article_by_slug(slug),
+         {:ok, %Article{}} <- Articles.delete_article(article) do
       send_resp(conn, :no_content, "")
     end
   end
