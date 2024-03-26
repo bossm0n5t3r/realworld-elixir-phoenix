@@ -41,6 +41,21 @@ defmodule RealworldElixirPhoenix.Articles do
     |> Repo.all()
   end
 
+  def list_articles_feed(user, params \\ []) do
+    {limit, params} = params |> Keyword.pop(:limit, @default_limit)
+    {offset, _} = params |> Keyword.pop(:offset, @default_offset)
+
+    from(a in Article,
+      inner_join: f in Favorite,
+      on: a.id == f.article_id,
+      where: f.user_id == ^user.id,
+      limit: ^limit,
+      offset: ^offset
+    )
+    |> order_by(desc: :inserted_at)
+    |> Repo.all()
+  end
+
   def article_where(query, []), do: query
 
   def article_where(query, [{:tag, tag} | rest]) do
