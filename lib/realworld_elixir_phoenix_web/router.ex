@@ -30,6 +30,8 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
     get "/articles", ArticleController, :index
     get "/articles/:slug", ArticleController, :show
+
+    get "/tags", TagController, :index
   end
 
   # Required Authenticated
