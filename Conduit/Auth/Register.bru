@@ -1,0 +1,53 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{APIURL}}/users
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  X-Requested-With: XMLHttpRequest
+}
+
+body:json {
+  {
+    "user": {
+      "email": "{{EMAIL}}",
+      "password": "{{PASSWORD}}",
+      "username": "{{USERNAME}}"
+    }
+  }
+}
+
+tests {
+  const responseJSON = res.getBody();
+  
+  test('Response contains "user" property', function () {
+    assert(responseJSON.hasOwnProperty('user'), true);
+  });
+  
+  const user = responseJSON.user || {};
+  
+  test('User has "email" property', function () {
+    assert(user.hasOwnProperty('email'), true);
+  });
+  test('User has "username" property', function () {
+    assert(user.hasOwnProperty('username'), true);
+  });
+  test('User has "bio" property', function () {
+    assert(user.hasOwnProperty('bio'), true);
+  });
+  test('User has "image" property', function () {
+    assert(user.hasOwnProperty('image'), true);
+  });
+  test('User has "token" property', function () {
+    assert(user.hasOwnProperty('token'), true);
+  });
+  
+}
