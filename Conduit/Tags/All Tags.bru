@@ -1,0 +1,37 @@
+meta {
+  name: All Tags
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{APIURL}}/tags
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  X-Requested-With: XMLHttpRequest
+}
+
+tests {
+  const is200Response = res.getStatus() === 200;
+  
+  test('Response code is 200 OK', function () {
+    assert(is200Response, true);
+  });
+  
+  if (is200Response) {
+    const responseJSON = res.getBody();
+  
+    test('Response contains "tags" property', function () {
+      assert(responseJSON.hasOwnProperty('tags'), true);
+    });
+  
+    test('"tags" property returned as array', function () {
+      assert(Array.isArray(responseJSON.tags), true);
+    });
+  }
+  
+}
