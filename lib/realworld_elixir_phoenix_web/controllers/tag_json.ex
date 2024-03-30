@@ -5,13 +5,10 @@ defmodule RealworldElixirPhoenixWeb.TagJSON do
   Renders a list of tags.
   """
   def index(%{tags: tags}) do
-    %{data: for(tag <- tags, do: data(tag))}
+    %{tags: for(tag <- tags, do: data(tag))}
   end
 
   defp data(%Tag{} = tag) do
-    %{
-      id: tag.id,
-      name: tag.name
-    }
+    tag.name
   end
 end
