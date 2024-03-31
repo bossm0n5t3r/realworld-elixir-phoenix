@@ -7,6 +7,7 @@ defmodule RealworldElixirPhoenix.Profiles.FollowRelated do
   @already_exists "ALREADY_EXISTS"
 
   @primary_key false
+  @foreign_key_type :binary_id
   schema "follow_related" do
     belongs_to(:user, User, primary_key: true)
     belongs_to(:target, User, primary_key: true)
