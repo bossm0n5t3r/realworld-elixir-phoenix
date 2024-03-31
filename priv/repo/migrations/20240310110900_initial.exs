@@ -41,8 +41,8 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
 
     create table(:article_tags, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :article_id, references(:articles, on_delete: :delete_all, type: :binary_id)
-      add :tag_id, references(:tags, on_delete: :delete_all, type: :binary_id)
+      add :article_id, references(:articles, type: :binary_id)
+      add :tag_id, references(:tags, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
@@ -60,18 +60,19 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
     create index(:comments, [:article_id])
 
     create table(:favorites, primary_key: false) do
-      add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
-      add :article_id, references(:articles, on_delete: :delete_all, type: :binary_id)
+      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
+      add :article_id, references(:articles, on_delete: :nothing, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
 
     create index(:favorites, [:user_id])
     create index(:favorites, [:article_id])
+    create unique_index(:favorites, [:user_id, :article_id])
 
     create table(:follow_related, primary_key: false) do
-      add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
-      add :target_id, references(:users, on_delete: :delete_all, type: :binary_id)
+      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
+      add :target_id, references(:users, on_delete: :nothing, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
