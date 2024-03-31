@@ -12,6 +12,8 @@ defmodule RealworldElixirPhoenix.Accounts.User do
     field :email, :string
     field :bio, :string
 
+    field :following, :boolean, virtual: true
+
     timestamps(type: :utc_datetime)
   end
 
