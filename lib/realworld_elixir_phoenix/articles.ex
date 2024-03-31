@@ -194,6 +194,22 @@ defmodule RealworldElixirPhoenix.Articles do
     Article.changeset(article, attrs)
   end
 
+  def create_favorite(%User{} = user, %Article{} = article) do
+    %Favorite{}
+    |> Favorite.changeset(%{user_id: user.id, article_id: article.id})
+    |> Repo.insert()
+  end
+
+  def delete_favorite(%User{} = user, %Article{} = article) do
+    from(f in Favorite,
+      where:
+        f.user_id == ^user.id and
+          f.article_id ==
+            ^article.id
+    )
+    |> Repo.delete_all()
+  end
+
   def list_tags() do
     Repo.all(Tag)
   end
