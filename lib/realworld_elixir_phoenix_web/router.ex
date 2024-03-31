@@ -51,6 +51,9 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
     post "/profiles/:username/follow", ProfileController, :follow
     delete "/profiles/:username/follow", ProfileController, :unfollow
+
+    post "/articles/:slug/favorite", FavoriteController, :create
+    delete "/articles/:slug/favorite", FavoriteController, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
