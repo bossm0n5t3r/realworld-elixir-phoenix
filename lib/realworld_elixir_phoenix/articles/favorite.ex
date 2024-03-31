@@ -7,7 +7,7 @@ defmodule RealworldElixirPhoenix.Articles.Favorite do
 
   @already_exists "ALREADY_EXISTS"
 
-  @primary_key {:id, :binary_id, autogenerate: true}
+  @primary_key false
   @foreign_key_type :binary_id
   schema "favorites" do
     belongs_to(:user, User, primary_key: true)
