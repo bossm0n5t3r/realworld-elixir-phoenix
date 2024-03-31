@@ -23,8 +23,9 @@ defmodule RealworldElixirPhoenix.Articles.Favorite do
     |> validate_required([:user_id, :article_id])
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:article_id)
-    |> unique_constraint([:user, :article],
-      name: :user_id_article_id_unique_index,
+    |> unique_constraint(
+      [:user_id, :article_id],
+      name: :favorites_user_id_article_id_index,
       message: @already_exists
     )
   end
