@@ -9,6 +9,8 @@ defmodule RealworldElixirPhoenix.Articles.Article do
   alias RealworldElixirPhoenix.Articles.Tag
   alias RealworldElixirPhoenix.Articles.ArticleTag
 
+  @already_exists "ALREADY_EXISTS"
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "articles" do
@@ -37,6 +39,7 @@ defmodule RealworldElixirPhoenix.Articles.Article do
     |> put_assoc(:tagList, parse_tags(attrs))
     |> validate_required([:title, :description, :body])
     |> title_to_slugify()
+    |> unique_constraint(:slug, message: @already_exists)
   end
 
   def title_to_slugify(changeset) do
