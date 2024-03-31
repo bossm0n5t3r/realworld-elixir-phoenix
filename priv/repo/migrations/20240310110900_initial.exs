@@ -69,7 +69,6 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
     create index(:favorites, [:article_id])
 
     create table(:follow_related, primary_key: false) do
-      add :id, :binary_id, primary_key: true
       add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
       add :target_id, references(:users, on_delete: :delete_all, type: :binary_id)
 
