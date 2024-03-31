@@ -32,6 +32,8 @@ defmodule RealworldElixirPhoenixWeb.Router do
     get "/articles/:slug", ArticleController, :show
 
     get "/tags", TagController, :index
+
+    get "/profiles/:username", ProfileController, :show
   end
 
   # Required Authenticated
@@ -46,6 +48,9 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
     put "/articles/:slug", ArticleController, :update
     delete "/articles/:slug", ArticleController, :delete
+
+    post "/profiles/:username/follow", ProfileController, :follow
+    delete "/profiles/:username/follow", ProfileController, :unfollow
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
