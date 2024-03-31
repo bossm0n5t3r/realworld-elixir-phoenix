@@ -28,6 +28,8 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
       timestamps(type: :utc_datetime)
     end
 
+    create unique_index(:articles, [:slug])
+
     create table(:tags, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
@@ -58,7 +60,6 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
     create index(:comments, [:article_id])
 
     create table(:favorites, primary_key: false) do
-      add :id, :binary_id, primary_key: true
       add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
       add :article_id, references(:articles, on_delete: :delete_all, type: :binary_id)
 
