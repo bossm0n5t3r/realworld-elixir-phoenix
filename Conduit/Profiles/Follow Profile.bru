@@ -1,0 +1,56 @@
+meta {
+  name: Follow Profile
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{APIURL}}/profiles/celeb_{{USERNAME}}/follow
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  X-Requested-With: XMLHttpRequest
+  Authorization: Token {{token}}
+}
+
+body:json {
+  {"user":{"email":"{{EMAIL}}"}}
+}
+
+tests {
+  const is200Response = res.status === 200;
+  
+  test('Response code is 200 OK', function () {
+    assert(is200Response, true);
+  });
+  
+  if (is200Response) {
+    const responseJSON = res.getBody();
+  
+    test('Response contains "profile" property', function () {
+      assert(responseJSON.hasOwnProperty('profile'), true);
+    });
+  
+    const profile = responseJSON.profile || {};
+  
+    test('Profile has "username" property', function () {
+      assert(profile.hasOwnProperty('username'), true);
+    });
+    test('Profile has "bio" property', function () {
+      assert(profile.hasOwnProperty('bio'), true);
+    });
+    test('Profile has "image" property', function () {
+      assert(profile.hasOwnProperty('image'), true);
+    });
+    test('Profile has "following" property', function () {
+      assert(profile.hasOwnProperty('following'), true);
+    });
+    test('Profile\'s "following" property is true', function () {
+      assert(profile.following === true, true);
+    });
+  }
+  
+}
