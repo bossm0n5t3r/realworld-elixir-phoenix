@@ -1,6 +1,4 @@
 defmodule RealworldElixirPhoenixWeb.ArticleJSON do
-  alias RealworldElixirPhoenixWeb.TagJSON
-
   alias RealworldElixirPhoenix.Articles.Article
   alias RealworldElixirPhoenix.Accounts.User
 
@@ -27,7 +25,7 @@ defmodule RealworldElixirPhoenixWeb.ArticleJSON do
       title: article.title,
       description: article.description,
       body: article.body,
-      tagList: TagJSON.index(%{tags: article.tagList}),
+      tagList: for(tag <- article.tagList, do: tag.name),
       favoritesCount: article.favorites |> Enum.count(),
       favorited: article.favorited,
       createdAt:
