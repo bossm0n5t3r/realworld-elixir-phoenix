@@ -23,7 +23,7 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
       add :description, :string
       add :tagList, {:array, :string}
       add :favoritesCount, :integer
-      add :author_id, references(:users, on_delete: :nothing, type: :binary_id)
+      add :author_id, references(:users, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
@@ -50,8 +50,8 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
     create table(:comments, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :body, :string
-      add :author_id, references(:users, on_delete: :nothing, type: :binary_id)
-      add :article_id, references(:articles, on_delete: :nothing, type: :binary_id)
+      add :author_id, references(:users, type: :binary_id)
+      add :article_id, references(:articles, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
@@ -60,8 +60,8 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
     create index(:comments, [:article_id])
 
     create table(:favorites, primary_key: false) do
-      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
-      add :article_id, references(:articles, on_delete: :nothing, type: :binary_id)
+      add :user_id, references(:users, type: :binary_id)
+      add :article_id, references(:articles, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
@@ -71,8 +71,8 @@ defmodule RealworldElixirPhoenix.Repo.Migrations.Initial do
     create unique_index(:favorites, [:user_id, :article_id])
 
     create table(:follow_related, primary_key: false) do
-      add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
-      add :target_id, references(:users, on_delete: :nothing, type: :binary_id)
+      add :user_id, references(:users, type: :binary_id)
+      add :target_id, references(:users, type: :binary_id)
 
       timestamps(type: :utc_datetime)
     end
