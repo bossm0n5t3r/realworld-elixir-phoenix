@@ -1,0 +1,107 @@
+meta {
+  name: Articles by Author with auth
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{APIURL}}/articles?author={{USERNAME}}
+  body: json
+  auth: none
+}
+
+query {
+  author: {{USERNAME}}
+}
+
+headers {
+  Content-Type: application/json
+  X-Requested-With: XMLHttpRequest
+  Authorization: Token {{token}}
+}
+
+tests {
+  const is200Response = res.status === 200;
+  
+  test('Response code is 200 OK', function () {
+    assert(is200Response, true);
+  });
+  
+  if (is200Response) {
+    const responseJSON = res.getBody();
+  
+    test('Response contains "articles" property', function () {
+      assert(responseJSON.hasOwnProperty('articles'), true);
+    });
+  
+    test('Response contains "articlesCount" property', function () {
+      assert(responseJSON.hasOwnProperty('articlesCount'), true);
+    });
+  
+    test('articlesCount is an integer', function () {
+      assert(Number.isInteger(responseJSON.articlesCount), true);
+    });
+  
+    if (responseJSON.articlesCount) {
+      const article = responseJSON.articles[0];
+  
+      test('Article has "title" property', function () {
+        assert(article.hasOwnProperty('title'), true);
+      });
+      test('Article has "slug" property', function () {
+        assert(article.hasOwnProperty('slug'), true);
+      });
+      test('Article has "body" property', function () {
+        assert(article.hasOwnProperty('body'), true);
+      });
+      test('Article has "createdAt" property', function () {
+        assert(article.hasOwnProperty('createdAt'), true);
+      });
+      test('Article\'s "createdAt" property is an ISO 8601 timestamp', function () {
+        assert(
+          /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$/.test(
+            article.createdAt,
+          ),
+          true,
+        );
+      });
+      test('Article has "updatedAt" property', function () {
+        assert(article.hasOwnProperty('updatedAt'), true);
+      });
+      test('Article\'s "updatedAt" property is an ISO 8601 timestamp', function () {
+        assert(
+          /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$/.test(
+            article.updatedAt,
+          ),
+          true,
+        );
+      });
+      test('Article has "description" property', function () {
+        assert(article.hasOwnProperty('description'), true);
+      });
+      test('Article has "tagList" property', function () {
+        assert(article.hasOwnProperty('tagList'), true);
+      });
+      test('Article\'s "tagList" property is an Array', function () {
+        assert(Array.isArray(article.tagList), true);
+      });
+      test('Article has "author" property', function () {
+        assert(article.hasOwnProperty('author'), true);
+      });
+      test('Article has "favorited" property', function () {
+        assert(article.hasOwnProperty('favorited'), true);
+      });
+      test('Article has "favoritesCount" property', function () {
+        assert(article.hasOwnProperty('favoritesCount'), true);
+      });
+      test('favoritesCount is an integer', function () {
+        assert(Number.isInteger(article.favoritesCount), true);
+      });
+    } else {
+      test('articlesCount is 0 when feed is empty', function () {
+        assert(responseJSON.articlesCount === 0, true);
+      });
+    }
+  }
+  
+}
