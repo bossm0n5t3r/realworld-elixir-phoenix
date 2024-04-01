@@ -19,23 +19,8 @@ defmodule RealworldElixirPhoenixWeb.Router do
     plug Guardian.Plug.EnsureAuthenticated
   end
 
-  # Optional Authenticated
-  scope "/api", RealworldElixirPhoenixWeb do
-    pipe_through [:api, :check_authenticated]
-
-    post "/users", UserController, :create
-    post "/users/login", UserController, :login
-
-    delete "/users/all", UserController, :delete_all
-
-    get "/articles", ArticleController, :index
-    get "/articles/:slug", ArticleController, :show
-
-    get "/tags", TagController, :index
-
-    get "/profiles/:username", ProfileController, :show
-  end
-
+  # :require_authenticated must be checked first because it is related to the order between /articles APIs
+  # "GET /articles/feed" must be checked before "GET /articles/:slug"
   # Required Authenticated
   scope "/api", RealworldElixirPhoenixWeb do
     pipe_through [:api, :require_authenticated]
@@ -54,6 +39,23 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
     post "/articles/:slug/favorite", FavoriteController, :create
     delete "/articles/:slug/favorite", FavoriteController, :delete
+  end
+
+  # Optional Authenticated
+  scope "/api", RealworldElixirPhoenixWeb do
+    pipe_through [:api, :check_authenticated]
+
+    post "/users", UserController, :create
+    post "/users/login", UserController, :login
+
+    delete "/users/all", UserController, :delete_all
+
+    get "/articles", ArticleController, :index
+    get "/articles/:slug", ArticleController, :show
+
+    get "/tags", TagController, :index
+
+    get "/profiles/:username", ProfileController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
