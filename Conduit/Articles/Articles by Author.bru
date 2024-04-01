@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{APIURL}}/articles?author=johnjacob
+  url: {{APIURL}}/articles?author={{USERNAME}}
   body: json
   auth: none
 }
 
 query {
-  author: johnjacob
+  author: {{USERNAME}}
 }
 
 headers {
