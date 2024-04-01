@@ -1,0 +1,76 @@
+meta {
+  name: All Comments for Article
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{APIURL}}/articles/{{slug}}/comments
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  X-Requested-With: XMLHttpRequest
+  Authorization: Token {{token}}
+}
+
+tests {
+  const is200Response = res.getStatus() === 200;
+  
+  test('Response code is 200 OK', function () {
+    assert(is200Response, true);
+  });
+  
+  if (is200Response) {
+    const responseJSON = res.getBody();
+  
+    test('Response contains "comments" property', function () {
+      assert(responseJSON.hasOwnProperty('comments'), true);
+    });
+  
+    if (responseJSON.comments.length) {
+      const comment = responseJSON.comments[0];
+  
+      test('Comment has "id" property', function () {
+        assert(comment.hasOwnProperty('id'), true);
+      });
+  
+      test('Comment has "body" property', function () {
+        assert(comment.hasOwnProperty('body'), true);
+      });
+  
+      test('Comment has "createdAt" property', function () {
+        assert(comment.hasOwnProperty('createdAt'), true);
+      });
+  
+      test('"createdAt" property is an ISO 8601 timestamp', function () {
+        assert(
+          /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$/.test(
+            comment.createdAt,
+          ),
+          true,
+        );
+      });
+  
+      test('Comment has "updatedAt" property', function () {
+        assert(comment.hasOwnProperty('updatedAt'), true);
+      });
+  
+      test('"updatedAt" property is an ISO 8601 timestamp', function () {
+        assert(
+          /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$/.test(
+            comment.updatedAt,
+          ),
+          true,
+        );
+      });
+  
+      test('Comment has "author" property', function () {
+        assert(comment.hasOwnProperty('author'), true);
+      });
+    }
+  }
+  
+}

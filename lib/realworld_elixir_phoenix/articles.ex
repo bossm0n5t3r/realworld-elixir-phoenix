@@ -7,9 +7,11 @@ defmodule RealworldElixirPhoenix.Articles do
   alias RealworldElixirPhoenix.Repo
 
   alias RealworldElixirPhoenix.Articles.Article
+  alias RealworldElixirPhoenix.Articles.Comment
   alias RealworldElixirPhoenix.Articles.Favorite
   alias RealworldElixirPhoenix.Articles.Tag
   alias RealworldElixirPhoenix.Accounts.User
+  alias RealworldElixirPhoenix.Profiles.FollowRelated
 
   @default_limit 20
   @default_offset 0
@@ -193,6 +195,55 @@ defmodule RealworldElixirPhoenix.Articles do
   def change_article(%Article{} = article, attrs \\ %{}) do
     Article.changeset(article, attrs)
   end
+
+  def create_comment(attrs) do
+    Comment.changeset(%Comment{}, attrs)
+    |> Repo.insert()
+  end
+
+  def create_comment(comment, %Article{} = article, %User{} = author) do
+    attrs =
+      comment
+      |> Map.put(:article_id, article.id)
+      |> Map.put(:author_id, author.id)
+
+    Comment.changeset(%Comment{}, attrs)
+    |> Repo.insert()
+  end
+
+  def list_comment_by_article_slug(slug, user) do
+    from(c in Comment,
+      join: a in Article,
+      on: c.article_id == a.id,
+      where:
+        a.slug ==
+          ^slug
+    )
+    |> comment_following(user)
+    |> Repo.all()
+  end
+
+  def get_comment!(id) do
+    Repo.get!(Comment, id)
+  end
+
+  def delete_comment(%Comment{} = comment) do
+    Repo.delete(comment)
+  end
+
+  def comment_following(query, %User{id: user_id}) do
+    query
+    |> join(:inner, [c], at in assoc(c, :author), as: :author)
+    |> join(:left, [c], fr in FollowRelated,
+      as: :fr,
+      on: fr.target_id == c.author_id and fr.user_id == ^user_id
+    )
+    |> select_merge([fr: fr, author: author], %{
+      author: merge(author, %{following: not is_nil(fr)})
+    })
+  end
+
+  def comment_following(query, _), do: query
 
   def create_favorite(%User{} = user, %Article{} = article) do
     %Favorite{}

@@ -39,6 +39,9 @@ defmodule RealworldElixirPhoenixWeb.Router do
 
     post "/articles/:slug/favorite", FavoriteController, :create
     delete "/articles/:slug/favorite", FavoriteController, :delete
+
+    post "/articles/:slug/comments", CommentController, :create
+    delete "/articles/:slug/comments/:id", CommentController, :delete
   end
 
   # Optional Authenticated
@@ -56,6 +59,8 @@ defmodule RealworldElixirPhoenixWeb.Router do
     get "/tags", TagController, :index
 
     get "/profiles/:username", ProfileController, :show
+
+    get "/articles/:slug/comments", CommentController, :list
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
