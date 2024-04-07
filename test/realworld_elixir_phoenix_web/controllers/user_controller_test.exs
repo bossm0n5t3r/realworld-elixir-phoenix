@@ -1,9 +1,9 @@
 defmodule RealworldElixirPhoenixWeb.UserControllerTest do
   use RealworldElixirPhoenixWeb.ConnCase
 
-  import RealworldElixirPhoenix.AdminFixtures
+  import RealworldElixirPhoenix.AccountsFixtures
 
-  alias RealworldElixirPhoenix.Admin.User
+  alias RealworldElixirPhoenix.Accounts.User
 
   @create_attrs %{
     username: "some username",
