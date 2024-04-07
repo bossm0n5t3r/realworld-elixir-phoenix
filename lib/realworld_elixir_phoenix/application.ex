@@ -10,7 +10,8 @@ defmodule RealworldElixirPhoenix.Application do
     children = [
       RealworldElixirPhoenixWeb.Telemetry,
       RealworldElixirPhoenix.Repo,
-      {DNSCluster, query: Application.get_env(:realworld_elixir_phoenix, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:realworld_elixir_phoenix, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: RealworldElixirPhoenix.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: RealworldElixirPhoenix.Finch},
