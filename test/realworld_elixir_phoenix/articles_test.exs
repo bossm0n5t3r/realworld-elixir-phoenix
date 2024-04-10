@@ -6,33 +6,35 @@ defmodule RealworldElixirPhoenix.ArticlesTest do
   describe "articles" do
     alias RealworldElixirPhoenix.Articles.Article
 
+    import RealworldElixirPhoenix.AccountsFixtures
     import RealworldElixirPhoenix.ArticlesFixtures
 
     @invalid_attrs %{description: nil, title: nil, body: nil, slug: nil}
 
     test "list_articles/0 returns all articles" do
       article = article_fixture()
-      assert Articles.list_articles() == [article]
+      assert_two_article_lists_are_equal([article], Articles.list_articles())
     end
 
     test "get_article!/1 returns the article with given id" do
-      article = article_fixture()
-      assert Articles.get_article!(article.id) == article
+      user = user_fixture()
+      article = article_fixture(%{author_id: user.id})
+
+      assert_two_articles_are_equal(article, Articles.get_article!(article.id))
     end
 
     test "create_article/1 with valid data creates a article" do
       valid_attrs = %{
-        description: "some description",
         title: "some title",
-        body: "some body",
-        slug: "some slug"
+        description: "some description",
+        body: "some body"
       }
 
       assert {:ok, %Article{} = article} = Articles.create_article(valid_attrs)
-      assert article.description == "some description"
       assert article.title == "some title"
+      assert article.description == "some description"
       assert article.body == "some body"
-      assert article.slug == "some slug"
+      assert article.slug == "some-title"
     end
 
     test "create_article/1 with invalid data returns error changeset" do
@@ -50,16 +52,17 @@ defmodule RealworldElixirPhoenix.ArticlesTest do
       }
 
       assert {:ok, %Article{} = article} = Articles.update_article(article, update_attrs)
-      assert article.description == "some updated description"
       assert article.title == "some updated title"
+      assert article.description == "some updated description"
       assert article.body == "some updated body"
-      assert article.slug == "some updated slug"
+      assert article.slug == "some-updated-title"
     end
 
     test "update_article/2 with invalid data returns error changeset" do
-      article = article_fixture()
+      user = user_fixture()
+      article = article_fixture(%{author_id: user.id})
       assert {:error, %Ecto.Changeset{}} = Articles.update_article(article, @invalid_attrs)
-      assert article == Articles.get_article!(article.id)
+      assert_two_articles_are_equal(article, Articles.get_article!(article.id))
     end
 
     test "delete_article/1 deletes the article" do
@@ -71,6 +74,22 @@ defmodule RealworldElixirPhoenix.ArticlesTest do
     test "change_article/1 returns a article changeset" do
       article = article_fixture()
       assert %Ecto.Changeset{} = Articles.change_article(article)
+    end
+
+    defp assert_two_articles_are_equal(expected_article, actual_article) do
+      assert expected_article.id == actual_article.id
+      assert expected_article.author_id == actual_article.author_id
+      assert expected_article.title == actual_article.title
+      assert expected_article.slug == actual_article.slug
+      assert expected_article.body == actual_article.body
+    end
+
+    defp assert_two_article_lists_are_equal(expected_articles, actual_articles) do
+      assert length(expected_articles) == length(actual_articles)
+
+      for expected_article <- expected_articles, actual_article <- actual_articles do
+        assert_two_articles_are_equal(expected_article, actual_article)
+      end
     end
   end
 end
