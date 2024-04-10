@@ -1,15 +1,16 @@
 defmodule RealworldElixirPhoenixWeb.ArticleControllerTest do
   use RealworldElixirPhoenixWeb.ConnCase
 
+  import RealworldElixirPhoenix.Guardian
   import RealworldElixirPhoenix.ArticlesFixtures
+  import RealworldElixirPhoenix.AccountsFixtures
 
   alias RealworldElixirPhoenix.Articles.Article
 
   @create_attrs %{
-    description: "some description",
     title: "some title",
-    body: "some body",
-    slug: "some slug"
+    description: "some description",
+    body: "some body"
   }
   @update_attrs %{
     description: "some updated description",
@@ -26,71 +27,98 @@ defmodule RealworldElixirPhoenixWeb.ArticleControllerTest do
   describe "index" do
     test "lists all articles", %{conn: conn} do
       conn = get(conn, ~p"/api/articles")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200)["articles"] == []
     end
   end
 
   describe "create article" do
     test "renders article when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/articles", article: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      user = user_fixture()
+      {:ok, token, _} = encode_and_sign(user)
 
-      conn = get(conn, ~p"/api/articles/#{id}")
+      conn =
+        post(conn |> put_req_header("authorization", "Token " <> token), ~p"/api/articles",
+          article: @create_attrs
+        )
 
       assert %{
-               "id" => ^id,
+               "title" => "some title",
                "body" => "some body",
                "description" => "some description",
-               "slug" => "some slug",
-               "title" => "some title"
-             } = json_response(conn, 200)["data"]
+               "slug" => "some-title"
+             } = json_response(conn, 201)["article"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/articles", article: @invalid_attrs)
+      user = user_fixture()
+      {:ok, token, _} = encode_and_sign(user)
+
+      conn =
+        post(conn |> put_req_header("authorization", "Token " <> token), ~p"/api/articles",
+          article: @invalid_attrs
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "update article" do
-    setup [:create_article]
+    setup [:create_article_context]
 
-    test "renders article when data is valid", %{conn: conn, article: %Article{id: id} = article} do
-      conn = put(conn, ~p"/api/articles/#{article}", article: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, ~p"/api/articles/#{id}")
+    test "renders article when data is valid", %{
+      conn: conn,
+      article: %Article{} = article,
+      token: token
+    } do
+      conn =
+        put(
+          conn |> put_req_header("authorization", "Token " <> token),
+          ~p"/api/articles/#{article.slug}",
+          article: @update_attrs
+        )
 
       assert %{
-               "id" => ^id,
+               "title" => "some updated title",
                "body" => "some updated body",
                "description" => "some updated description",
-               "slug" => "some updated slug",
-               "title" => "some updated title"
-             } = json_response(conn, 200)["data"]
+               "slug" => "some-updated-title"
+             } = json_response(conn, 200)["article"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, article: article} do
-      conn = put(conn, ~p"/api/articles/#{article}", article: @invalid_attrs)
+    test "renders errors when data is invalid", %{
+      conn: conn,
+      article: %Article{} = article,
+      token: token
+    } do
+      conn =
+        put(
+          conn |> put_req_header("authorization", "Token " <> token),
+          ~p"/api/articles/#{article.slug}",
+          article: @invalid_attrs
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "delete article" do
-    setup [:create_article]
+    setup [:create_article_context]
 
-    test "deletes chosen article", %{conn: conn, article: article} do
-      conn = delete(conn, ~p"/api/articles/#{article}")
+    test "deletes chosen article", %{conn: conn, article: article, token: token} do
+      conn =
+        delete(
+          conn |> put_req_header("authorization", "Token " <> token),
+          ~p"/api/articles/#{article.slug}"
+        )
+
       assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/articles/#{article}")
-      end
     end
   end
 
-  defp create_article(_) do
-    article = article_fixture()
-    %{article: article}
+  defp create_article_context(_) do
+    user = user_fixture()
+    {:ok, token, _} = encode_and_sign(user)
+    article = article_fixture(%{author_id: user.id})
+    %{user: user, token: token, article: article}
   end
 end
