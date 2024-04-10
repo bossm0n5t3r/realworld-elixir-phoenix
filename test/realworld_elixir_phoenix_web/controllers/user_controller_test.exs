@@ -1,9 +1,8 @@
 defmodule RealworldElixirPhoenixWeb.UserControllerTest do
   use RealworldElixirPhoenixWeb.ConnCase
 
+  import RealworldElixirPhoenix.Guardian
   import RealworldElixirPhoenix.AccountsFixtures
-
-  alias RealworldElixirPhoenix.Accounts.User
 
   @create_attrs %{
     username: "some username",
@@ -21,26 +20,20 @@ defmodule RealworldElixirPhoenixWeb.UserControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  describe "index" do
-    test "lists all users", %{conn: conn} do
-      conn = get(conn, ~p"/api/users")
-      assert json_response(conn, 200)["data"] == []
-    end
-  end
-
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       conn = post(conn, ~p"/api/users", user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      assert %{"email" => email} = json_response(conn, 201)["user"]
 
-      conn = get(conn, ~p"/api/users/#{id}")
+      conn =
+        post(conn, ~p"/api/users/login",
+          user: %{"email" => email, "password" => @create_attrs.password}
+        )
 
       assert %{
-               "id" => ^id,
                "email" => "some email",
-               "password" => "some password",
                "username" => "some username"
-             } = json_response(conn, 200)["data"]
+             } = json_response(conn, 200)["user"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -52,41 +45,25 @@ defmodule RealworldElixirPhoenixWeb.UserControllerTest do
   describe "update user" do
     setup [:create_user]
 
-    test "renders user when data is valid", %{conn: conn, user: %User{id: id} = user} do
-      conn = put(conn, ~p"/api/users/#{user}", user: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, ~p"/api/users/#{id}")
+    test "renders user when data is valid", %{
+      conn: conn,
+      token: token
+    } do
+      conn =
+        put(conn |> put_req_header("authorization", "Token " <> token), ~p"/api/user",
+          user: @update_attrs
+        )
 
       assert %{
-               "id" => ^id,
                "email" => "some updated email",
-               "password" => "some updated password",
                "username" => "some updated username"
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, ~p"/api/users/#{user}", user: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
-
-  describe "delete user" do
-    setup [:create_user]
-
-    test "deletes chosen user", %{conn: conn, user: user} do
-      conn = delete(conn, ~p"/api/users/#{user}")
-      assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/users/#{user}")
-      end
+             } = json_response(conn, 200)["user"]
     end
   end
 
   defp create_user(_) do
     user = user_fixture()
-    %{user: user}
+    {:ok, token, _} = encode_and_sign(user)
+    %{user: user, token: token}
   end
 end
