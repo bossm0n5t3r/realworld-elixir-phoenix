@@ -11,10 +11,9 @@ defmodule RealworldElixirPhoenix.ArticlesFixtures do
     {:ok, article} =
       attrs
       |> Enum.into(%{
-        body: "some body",
+        title: "some title",
         description: "some description",
-        slug: "some slug",
-        title: "some title"
+        body: "some body"
       })
       |> RealworldElixirPhoenix.Articles.create_article()
 
