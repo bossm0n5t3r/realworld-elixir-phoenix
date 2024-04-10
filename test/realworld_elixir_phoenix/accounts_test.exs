@@ -32,7 +32,7 @@ defmodule RealworldElixirPhoenix.AccountsTest do
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
       assert user.image == "some image"
       assert user.username == "some username"
-      assert user.password == "some password"
+      assert Bcrypt.verify_pass("some password", user.password)
       assert user.email == "some email"
       assert user.bio == "some bio"
     end
@@ -55,7 +55,7 @@ defmodule RealworldElixirPhoenix.AccountsTest do
       assert {:ok, %User{} = user} = Accounts.update_user(user, update_attrs)
       assert user.image == "some updated image"
       assert user.username == "some updated username"
-      assert user.password == "some updated password"
+      assert Bcrypt.verify_pass("some updated password", user.password)
       assert user.email == "some updated email"
       assert user.bio == "some updated bio"
     end
